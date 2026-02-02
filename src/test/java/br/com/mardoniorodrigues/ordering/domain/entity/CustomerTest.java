@@ -1,5 +1,6 @@
 package br.com.mardoniorodrigues.ordering.domain.entity;
 
+import br.com.mardoniorodrigues.ordering.domain.exception.CustomerArchivedException;
 import br.com.mardoniorodrigues.ordering.domain.utility.IdGenerator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class CustomerTest {
 
@@ -69,8 +71,41 @@ class CustomerTest {
             c -> assertThat(c.email()).isNotEqualTo("john.doe@hotmail.com"),
             c -> assertThat(c.phone()).isEqualTo("000-000-0000"),
             c -> assertThat(c.document()).isEqualTo("000-000-0000"),
-            c -> assertThat(c.birthDate()).isNull()
+            c -> assertThat(c.birthDate()).isNull(),
+            c -> assertThat(c.isPromotionNotificationsAllowed()).isFalse()
             );
+    }
+
+    @Test
+    void given_archivedCustomer_whenTryToUpdate_shouldGenerateException() {
+        Customer customer = new Customer(
+            IdGenerator.generateTimeBasedUUID(),
+            "Anonymous",
+            null,
+            "anonymous@anonymous.com",
+            "000-000-0000",
+            "000-000-0000",
+            false,
+            true,
+            OffsetDateTime.now(),
+            OffsetDateTime.now(),
+            10
+        );
+
+        assertThatExceptionOfType(CustomerArchivedException.class)
+            .isThrownBy(customer::archive);
+
+        assertThatExceptionOfType(CustomerArchivedException.class)
+            .isThrownBy(() -> customer.changeEmail("email@email.com"));
+
+        assertThatExceptionOfType(CustomerArchivedException.class)
+            .isThrownBy(() -> customer.changePhone("123-123-1234"));
+
+        assertThatExceptionOfType(CustomerArchivedException.class)
+            .isThrownBy(customer::enablePromotionNotifications);
+
+        assertThatExceptionOfType(CustomerArchivedException.class)
+            .isThrownBy(customer::disablePromotionNotifications);
     }
 
 }

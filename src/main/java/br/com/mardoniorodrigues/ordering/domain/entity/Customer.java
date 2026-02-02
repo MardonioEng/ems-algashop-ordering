@@ -1,5 +1,6 @@
 package br.com.mardoniorodrigues.ordering.domain.entity;
 
+import br.com.mardoniorodrigues.ordering.domain.exception.CustomerArchivedException;
 import br.com.mardoniorodrigues.ordering.domain.validator.FieldValidations;
 
 import java.time.LocalDate;
@@ -7,10 +8,10 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-import static br.com.mardoniorodrigues.ordering.domain.exceptions.ErrorMessages.VALIDATION_ERROR_BIRTHDATE_MUST_IN_PAST;
-import static br.com.mardoniorodrigues.ordering.domain.exceptions.ErrorMessages.VALIDATION_ERROR_EMAIL_IS_INVALID;
-import static br.com.mardoniorodrigues.ordering.domain.exceptions.ErrorMessages.VALIDATION_ERROR_FULLNAME_IS_BLANK;
-import static br.com.mardoniorodrigues.ordering.domain.exceptions.ErrorMessages.VALIDATION_ERROR_FULLNAME_IS_NULL;
+import static br.com.mardoniorodrigues.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_BIRTHDATE_MUST_IN_PAST;
+import static br.com.mardoniorodrigues.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_EMAIL_IS_INVALID;
+import static br.com.mardoniorodrigues.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_FULLNAME_IS_BLANK;
+import static br.com.mardoniorodrigues.ordering.domain.exception.ErrorMessages.VALIDATION_ERROR_FULLNAME_IS_NULL;
 
 public class Customer {
 
@@ -61,6 +62,7 @@ public class Customer {
     }
 
     public void archive() {
+        verifyChangeable();
         this.setArchived(true);
         this.setArchivedAt(OffsetDateTime.now());
         this.setFullName("Anonymous");
@@ -68,25 +70,31 @@ public class Customer {
         this.setDocument("000-000-0000");
         this.setEmail(UUID.randomUUID() + "@anonymous.com");
         this.setBirthDate(null);
+        this.setPromotionNotificationsAllowed(false);
     }
 
     public void enablePromotionNotifications() {
+        verifyChangeable();
         this.setPromotionNotificationsAllowed(true);
     }
 
     public void disablePromotionNotifications() {
+        verifyChangeable();
         this.setPromotionNotificationsAllowed(false);
     }
 
     public void changeName(String fullName) {
+        verifyChangeable();
         this.setFullName(fullName);
     }
 
     public void changeEmail(String email) {
+        verifyChangeable();
         this.setEmail(email);
     }
 
     public void changePhone(String phone) {
+        verifyChangeable();
         this.setPhone(phone);
     }
 
@@ -196,6 +204,12 @@ public class Customer {
     private void setLoyaltyPoints(Integer loyaltyPoints) {
         Objects.requireNonNull(loyaltyPoints);
         this.loyaltyPoints = loyaltyPoints;
+    }
+
+    private void verifyChangeable() {
+        if (this.isArchived()) {
+            throw new CustomerArchivedException();
+        }
     }
 
     @Override
