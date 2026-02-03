@@ -1,6 +1,5 @@
 package br.com.mardoniorodrigues.ordering.domain.valueObject;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -27,9 +26,20 @@ class LoyaltyPointsTest {
     void shouldNotAddValue() {
         LoyaltyPoints loyaltyPoints = new LoyaltyPoints(10);
 
-
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> loyaltyPoints.add(-5));
+
+        assertThat(loyaltyPoints.value()).isEqualTo(10);
+    }
+
+    @Test
+    void shouldNotAddZeroValue() {
+        LoyaltyPoints loyaltyPoints = new LoyaltyPoints(10);
+
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> loyaltyPoints.add(0));
+
+        assertThat(loyaltyPoints.value()).isEqualTo(10);
     }
 
 
