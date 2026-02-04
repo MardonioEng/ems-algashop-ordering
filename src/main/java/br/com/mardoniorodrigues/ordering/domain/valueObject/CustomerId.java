@@ -11,9 +11,8 @@ public record CustomerId(UUID value) {
         this(IdGenerator.generateTimeBasedUUID());
     }
 
-    public CustomerId(UUID value) {
+    public CustomerId {
         Objects.requireNonNull(value);
-        this.value = value;
     }
 
     @Override
