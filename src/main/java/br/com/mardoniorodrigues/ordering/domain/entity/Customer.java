@@ -1,13 +1,7 @@
 package br.com.mardoniorodrigues.ordering.domain.entity;
 
 import br.com.mardoniorodrigues.ordering.domain.exception.CustomerArchivedException;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.BirthDate;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.CustomerId;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.Document;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.Email;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.FullName;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.LoyaltyPoints;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.Phone;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.*;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -28,10 +22,11 @@ public class Customer {
     private OffsetDateTime registeredAt;
     private OffsetDateTime archivedAt;
     private LoyaltyPoints loyaltyPoints;
+    private Address address;
 
     public Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone, Document document,
                     Boolean promotionNotificationsAllowed, Boolean archived, OffsetDateTime registeredAt,
-                    OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints) {
+                    OffsetDateTime archivedAt, LoyaltyPoints loyaltyPoints, Address address) {
         this.setId(id);
         this.setFullName(fullName);
         this.setBirthDate(birthDate);
@@ -43,10 +38,11 @@ public class Customer {
         this.setRegisteredAt(registeredAt);
         this.setArchivedAt(archivedAt);
         this.setLoyaltyPoints(loyaltyPoints);
+        this.setAddress(address);
     }
 
     public Customer(CustomerId id, FullName fullName, BirthDate birthDate, Email email, Phone phone, Document document,
-                    Boolean promotionNotificationsAllowed, OffsetDateTime registeredAt) {
+                    Boolean promotionNotificationsAllowed, OffsetDateTime registeredAt, Address address) {
         this.setId(id);
         this.setFullName(fullName);
         this.setBirthDate(birthDate);
@@ -57,6 +53,7 @@ public class Customer {
         this.setRegisteredAt(registeredAt);
         this.setArchived(false);
         this.setLoyaltyPoints(LoyaltyPoints.ZERO);
+        this.setAddress(address);
     }
 
     public void addLoyaltyPoint(LoyaltyPoints loyalPointsAdded) {
@@ -74,6 +71,11 @@ public class Customer {
         this.setEmail(new Email(UUID.randomUUID() + "@anonymous.com"));
         this.setBirthDate(null);
         this.setPromotionNotificationsAllowed(false);
+        this.setAddress(this.address()
+                .toBuilder()
+                .number("Anonymized")
+                .complement(null)
+                .build());
     }
 
     public void enablePromotionNotifications() {
@@ -99,6 +101,11 @@ public class Customer {
     public void changePhone(Phone phone) {
         verifyChangeable();
         this.setPhone(phone);
+    }
+
+    public void changeAddress(Address address) {
+        verifyChangeable();
+        this.setAddress(address);
     }
 
     public CustomerId id() {
@@ -143,6 +150,10 @@ public class Customer {
 
     public LoyaltyPoints loyaltyPoints() {
         return loyaltyPoints;
+    }
+
+    public Address address() {
+        return address;
     }
 
     private void setId(CustomerId id) {
@@ -197,6 +208,11 @@ public class Customer {
     private void setLoyaltyPoints(LoyaltyPoints loyaltyPoints) {
         Objects.requireNonNull(loyaltyPoints);
         this.loyaltyPoints = loyaltyPoints;
+    }
+
+    private void setAddress(Address address) {
+        Objects.requireNonNull(address);
+        this.address = address;
     }
 
     private void verifyChangeable() {
