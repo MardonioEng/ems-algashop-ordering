@@ -1,4 +1,4 @@
-package br.com.mardoniorodrigues.ordering.domain.valueObject;
+package br.com.mardoniorodrigues.ordering.domain.valueObject.id;
 
 import br.com.mardoniorodrigues.ordering.domain.utility.IdGenerator;
 
@@ -7,12 +7,12 @@ import java.util.UUID;
 
 public record CustomerId(UUID value) {
 
-    public CustomerId() {
-        this(IdGenerator.generateTimeBasedUUID());
-    }
-
     public CustomerId {
         Objects.requireNonNull(value);
+    }
+
+    public CustomerId() {
+        this(IdGenerator.generateTimeBasedUUID());
     }
 
     @Override

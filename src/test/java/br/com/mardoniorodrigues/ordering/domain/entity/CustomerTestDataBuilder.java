@@ -1,6 +1,7 @@
 package br.com.mardoniorodrigues.ordering.domain.entity;
 
 import br.com.mardoniorodrigues.ordering.domain.valueObject.*;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.id.CustomerId;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;

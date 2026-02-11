@@ -2,6 +2,7 @@ package br.com.mardoniorodrigues.ordering.domain.entity;
 
 import br.com.mardoniorodrigues.ordering.domain.exception.CustomerArchivedException;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.*;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.id.CustomerId;
 import lombok.Builder;
 
 import java.time.OffsetDateTime;
