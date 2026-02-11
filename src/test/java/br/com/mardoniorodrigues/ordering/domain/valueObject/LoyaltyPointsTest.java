@@ -41,6 +41,4 @@ class LoyaltyPointsTest {
 
         assertThat(loyaltyPoints.value()).isEqualTo(10);
     }
-
-
 }
