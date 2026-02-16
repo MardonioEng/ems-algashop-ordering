@@ -1,11 +1,9 @@
 package br.com.mardoniorodrigues.ordering.domain.entity;
 
-import br.com.mardoniorodrigues.ordering.domain.valueObject.BillingInfo;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.Money;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.Quantity;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.ShippingInfo;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.*;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.CustomerId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.OrderId;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.id.ProductId;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -78,6 +76,24 @@ public class Order {
             null,
             new HashSet<>()
         );
+    }
+
+    public void addItem(ProductId productId, ProductName productName,
+                        Money price, Quantity quantity) {
+
+        OrderItem orderItem = OrderItem.brandNew()
+            .orderId(this.id)
+            .price(price)
+            .quantity(quantity)
+            .productName(productName)
+            .productId(productId)
+            .build();
+
+        if (this.items == null) {
+            this.items = new HashSet<>();
+        }
+
+        this.items.add(orderItem);
     }
 
     public OrderId id() {
