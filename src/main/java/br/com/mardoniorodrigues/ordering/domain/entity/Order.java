@@ -6,6 +6,7 @@ import br.com.mardoniorodrigues.ordering.domain.valueObject.id.OrderId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.ProductId;
 import lombok.Builder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -95,7 +96,11 @@ public class Order {
         }
 
         this.items.add(orderItem);
+
+        this.recalculateTotals();
     }
+
+
 
     public OrderId id() {
         return id;
@@ -151,6 +156,25 @@ public class Order {
 
     public LocalDate expectedDeliveryDate() {
         return expectedDeliveryDate;
+    }
+
+    private void recalculateTotals() {
+        BigDecimal totalItemsAmount = this.items()
+            .stream()
+            .map(i -> i.totalAmount().value())
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        Integer totalItemsQuantity = this.items
+            .stream()
+            .map(i -> i.quantity().value())
+            .reduce(0, Integer::sum);
+
+        BigDecimal shippingCost = this.shippingCost() == null ? BigDecimal.ZERO : this.shippingCost.value();
+
+        BigDecimal totalAmount = totalItemsAmount.add(shippingCost);
+
+        this.setTotalAmount(new Money(totalAmount));
+        this.setTotalItems(new Quantity(totalItemsQuantity));
     }
 
     public Set<OrderItem> items() {
