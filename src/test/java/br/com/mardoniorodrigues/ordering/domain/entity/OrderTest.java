@@ -25,14 +25,10 @@ class OrderTest {
     @Test
     public void shouldAddItem() {
         Order order = Order.draft(new CustomerId());
-        ProductId productId = new ProductId();
+        Product product = ProductTestDataBuilder.aProductAltMousePad().build();
+        ProductId productId = product.id();
 
-        order.addItem(
-                productId,
-            new ProductName("Mouse Gamer"),
-            new Money("100"),
-            new Quantity(1)
-        );
+        order.addItem(product, new Quantity(1));
 
         assertThat(order.items().size()).isEqualTo(1);
 
@@ -40,7 +36,7 @@ class OrderTest {
 
         assertWith(orderItem,
             (i) -> assertThat(i.id()).isNotNull(),
-            (i) -> assertThat(i.productName()).isEqualTo(new ProductName("Mouse Gamer")),
+            (i) -> assertThat(i.productName()).isEqualTo(new ProductName("Mouse Pad")),
             (i) -> assertThat(i.productId()).isEqualTo(productId),
             (i) -> assertThat(i.price()).isEqualTo(new Money("100")),
             (i) -> assertThat(i.quantity()).isEqualTo(new Quantity(1))
@@ -50,14 +46,9 @@ class OrderTest {
     @Test
     public void shouldGenerateExceptionWhenTryToChangeItemSet() {
         Order order = Order.draft(new CustomerId());
-        ProductId productId = new ProductId();
+        Product product = ProductTestDataBuilder.aProductAltMousePad().build();
 
-        order.addItem(
-            productId,
-            new ProductName("Mouse Gamer"),
-            new Money("100"),
-            new Quantity(1)
-        );
+        order.addItem(product, new Quantity(1));
 
         Set<OrderItem> item = order.items();
 
@@ -70,20 +61,16 @@ class OrderTest {
         Order order = Order.draft(new CustomerId());
 
         order.addItem(
-            new ProductId(),
-            new ProductName("Mouse Gamer"),
-            new Money("100"),
+            ProductTestDataBuilder.aProductAltMousePad().build(),
             new Quantity(2)
         );
 
         order.addItem(
-            new ProductId(),
-            new ProductName("RAM Memory"),
-            new Money("50"),
+            ProductTestDataBuilder.aProductAltRamMemery().build(),
             new Quantity(1)
         );
 
-        assertThat(order.totalAmount()).isEqualTo(new Money("250"));
+        assertThat(order.totalAmount()).isEqualTo(new Money("400"));
         assertThat(order.totalItems()).isEqualTo(new Quantity(3));
     }
 
@@ -223,9 +210,7 @@ class OrderTest {
         Order order = Order.draft(new CustomerId());
 
         order.addItem(
-            new ProductId(),
-            new ProductName("Desktop X11"),
-            new Money("10.00"),
+            ProductTestDataBuilder.aProduct().build(),
             new Quantity(3)
         );
 
@@ -234,7 +219,7 @@ class OrderTest {
         order.changeItemQuantity(orderItem.id(), new Quantity(5));
 
         assertWith(order,
-            o -> assertThat(o.totalAmount()).isEqualTo(new Money("50.00")),
+            o -> assertThat(o.totalAmount()).isEqualTo(new Money("15000.00")),
             o -> assertThat(o.totalItems()).isEqualTo(new Quantity(5))
         );
     }

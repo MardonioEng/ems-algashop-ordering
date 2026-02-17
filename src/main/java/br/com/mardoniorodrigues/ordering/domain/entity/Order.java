@@ -4,15 +4,11 @@ import br.com.mardoniorodrigues.ordering.domain.exception.OrderCannotBePlacedExc
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderDoesNotContainOrderItemException;
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderStatusCannotBeChangedException;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.BillingInfo;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.*;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.CustomerId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.OrderId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.OrderItemId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.ProductId;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.Money;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.ProductName;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.Quantity;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.ShippingInfo;
 
 import lombok.Builder;
 
@@ -90,15 +86,14 @@ public class Order {
         );
     }
 
-    public void addItem(ProductId productId, ProductName productName,
-                        Money price, Quantity quantity) {
+    public void addItem(Product product, Quantity quantity) {
+        Objects.requireNonNull(product);
+        Objects.requireNonNull(quantity);
 
         OrderItem orderItem = OrderItem.brandNew()
             .orderId(this.id)
-            .price(price)
             .quantity(quantity)
-            .productName(productName)
-            .productId(productId)
+            .product(product)
             .build();
 
         if (this.items == null) {
