@@ -1,11 +1,13 @@
 package br.com.mardoniorodrigues.ordering.domain.entity;
 
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderCannotBePlacedException;
+import br.com.mardoniorodrigues.ordering.domain.exception.OrderDoesNotContainOrderItemException;
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderStatusCannotBeChangedException;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.BillingInfo;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.CustomerId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.OrderId;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.id.OrderItemId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.ProductId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.Money;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.ProductName;
@@ -146,6 +148,16 @@ public class Order {
         this.setExpectedDeliveryDate(expectedDeliveryDate);
     }
 
+    public void changeItemQuantity(OrderItemId orderItemId, Quantity quantity) {
+        Objects.requireNonNull(orderItemId);
+        Objects.requireNonNull(quantity);
+
+        OrderItem orderItem = this.findOrderItem(orderItemId);
+        orderItem.changeQuantity(quantity);
+
+        this.recalculateTotals();
+    }
+
     public boolean isDraft() {
         return OrderStatus.DRAFT.equals(this.status());
     }
@@ -261,6 +273,15 @@ public class Order {
         if (this.items() == null || this.items.isEmpty()) {
             throw OrderCannotBePlacedException.noItems(this.id());
         }
+    }
+
+    private OrderItem findOrderItem(OrderItemId orderItemId) {
+        Objects.requireNonNull(orderItemId);
+
+        return this.items.stream()
+                .filter(i -> i.id().equals(orderItemId))
+                .findFirst()
+                .orElseThrow(() -> new OrderDoesNotContainOrderItemException(this.id(), orderItemId));
     }
 
     public Set<OrderItem> items() {

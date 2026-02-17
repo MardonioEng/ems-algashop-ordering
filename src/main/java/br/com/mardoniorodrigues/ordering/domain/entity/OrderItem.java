@@ -53,6 +53,13 @@ public class OrderItem {
         return orderItem;
     }
 
+    void changeQuantity(Quantity quantity) {
+        Objects.requireNonNull(quantity);
+
+        this.setQuantity(quantity);
+        this.recalculeteTotals();
+    }
+
     public OrderItemId id() {
         return id;
     }
