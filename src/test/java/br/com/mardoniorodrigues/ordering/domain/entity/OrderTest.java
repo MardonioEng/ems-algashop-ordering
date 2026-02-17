@@ -2,10 +2,12 @@ package br.com.mardoniorodrigues.ordering.domain.entity;
 
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderStatusCannotBeChangedException;
+import br.com.mardoniorodrigues.ordering.domain.exception.ProductOutOfStockException;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.*;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.CustomerId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.ProductId;
 
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -222,5 +224,17 @@ class OrderTest {
             o -> assertThat(o.totalAmount()).isEqualTo(new Money("15000.00")),
             o -> assertThat(o.totalItems()).isEqualTo(new Quantity(5))
         );
+    }
+
+    @Test
+    public void givenOutOfStockProduct_whenTryAddToAnOrder_shouldNotAllow() {
+        Order order = Order.draft(new CustomerId());
+
+        ThrowableAssert.ThrowingCallable addItemTask = () -> order
+            .addItem(ProductTestDataBuilder
+            .aProductUnavailable().build(), new Quantity(1));
+
+        assertThatExceptionOfType(ProductOutOfStockException.class)
+            .isThrownBy(addItemTask);
     }
 }

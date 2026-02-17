@@ -1,5 +1,6 @@
 package br.com.mardoniorodrigues.ordering.domain.valueObject;
 
+import br.com.mardoniorodrigues.ordering.domain.exception.ProductOutOfStockException;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.ProductId;
 import lombok.Builder;
 
@@ -18,5 +19,15 @@ public record Product(
         Objects.requireNonNull(name);
         Objects.requireNonNull(price);
         Objects.requireNonNull(inStock);
+    }
+
+    public void checkOutOfStock() {
+        if (isOutOfStock()) {
+            throw new ProductOutOfStockException(this.id());
+        }
+    }
+
+    private boolean isOutOfStock() {
+        return !inStock();
     }
 }
