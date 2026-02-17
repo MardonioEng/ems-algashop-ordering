@@ -90,17 +90,27 @@ class OrderTest {
     @Test
     public void givenDraftOrder_whenPlace_shouldChangeToPlaced() {
 
-        Order order = Order.draft(new CustomerId());
+        Order order = OrderTestDataBuilder.anOrder().build();
         order.place();
 
         assertThat(order.isPlaced()).isTrue();
     }
 
     @Test
+    public void givenPlacedOrder_whenMarkAsPaid_shouldChangeToPaid() {
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
+        order.markAsPaid();
+
+        assertThat(order.isPaid()).isTrue();
+        assertThat(order.paidAt()).isNotNull();
+    }
+
+    @Test
     public void givenPlacedOrder_whenTryPlace_shouldGenerateException() {
 
-        Order order = Order.draft(new CustomerId());
-        order.place();
+        Order order = OrderTestDataBuilder.anOrder()
+            .status(OrderStatus.PLACED)
+            .build();
 
         assertThatExceptionOfType(OrderStatusCannotBeChangedException.class)
             .isThrownBy(order::place);

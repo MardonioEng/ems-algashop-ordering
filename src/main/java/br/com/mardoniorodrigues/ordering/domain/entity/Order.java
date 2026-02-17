@@ -1,11 +1,17 @@
 package br.com.mardoniorodrigues.ordering.domain.entity;
 
+import br.com.mardoniorodrigues.ordering.domain.exception.OrderCannotBePlacedException;
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderStatusCannotBeChangedException;
-import br.com.mardoniorodrigues.ordering.domain.valueObject.*;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.BillingInfo;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.CustomerId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.OrderId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.ProductId;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.Money;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.ProductName;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.Quantity;
+import br.com.mardoniorodrigues.ordering.domain.valueObject.ShippingInfo;
+
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -103,8 +109,25 @@ public class Order {
     }
 
     public void place() {
-        // TODO Business rules!
+        Objects.requireNonNull(this.shipping());
+        Objects.requireNonNull(this.billing());
+        Objects.requireNonNull(this.expectedDeliveryDate());
+        Objects.requireNonNull(this.shippingCost());
+        Objects.requireNonNull(this.paymentMethod());
+        Objects.requireNonNull(this.items());
+
+        if (this.items().isEmpty()) {
+            throw new OrderCannotBePlacedException(this.id());
+        }
+
+        this.setPlacedAt(OffsetDateTime.now());
+
         this.changeStatus(OrderStatus.PLACED);
+    }
+
+    public void markAsPaid() {
+        this.setPaidAt(OffsetDateTime.now());
+        this.changeStatus(OrderStatus.PAID);
     }
 
     public void changePaymentMethod(PaymentMethod paymentMethod) {
@@ -137,6 +160,10 @@ public class Order {
 
     public boolean isPlaced() {
         return OrderStatus.PLACED.equals(this.status());
+    }
+
+    public boolean isPaid() {
+        return OrderStatus.PAID.equals(this.status());
     }
 
     public OrderId id() {
