@@ -1,5 +1,6 @@
 package br.com.mardoniorodrigues.ordering.domain.entity;
 
+import br.com.mardoniorodrigues.ordering.domain.exception.OrderStatusCannotBeChangedException;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.Money;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.ProductName;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.Quantity;
@@ -84,5 +85,24 @@ class OrderTest {
 
         assertThat(order.totalAmount()).isEqualTo(new Money("250"));
         assertThat(order.totalItems()).isEqualTo(new Quantity(3));
+    }
+
+    @Test
+    public void givenDraftOrder_whenPlace_shouldChangeToPlaced() {
+
+        Order order = Order.draft(new CustomerId());
+        order.place();
+
+        assertThat(order.isPlaced()).isTrue();
+    }
+
+    @Test
+    public void givenPlacedOrder_whenTryPlace_shouldGenerateException() {
+
+        Order order = Order.draft(new CustomerId());
+        order.place();
+
+        assertThatExceptionOfType(OrderStatusCannotBeChangedException.class)
+            .isThrownBy(order::place);
     }
 }
