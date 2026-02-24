@@ -1,5 +1,6 @@
 package br.com.mardoniorodrigues.ordering.domain.entity;
 
+import br.com.mardoniorodrigues.ordering.domain.exception.OrderCannotBeEditedException;
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
 import br.com.mardoniorodrigues.ordering.domain.exception.OrderStatusCannotBeChangedException;
 import br.com.mardoniorodrigues.ordering.domain.exception.ProductOutOfStockException;
@@ -206,6 +207,55 @@ class OrderTest {
             .aProductUnavailable().build(), new Quantity(1));
 
         assertThatExceptionOfType(ProductOutOfStockException.class)
+            .isThrownBy(addItemTask);
+    }
+
+    @Test
+    public void givenDraftOrder_whenChangeProperties_shouldAllow() {
+
+        CustomerId customerId = new CustomerId();
+        Order order = Order.draft(customerId);
+
+        Product product = ProductTestDataBuilder.aProductAltMousePad().build();
+        ProductId productId = product.id();
+        Shipping shipping = OrderTestDataBuilder.aShipping();
+        Billing billing = OrderTestDataBuilder.aBilling();
+
+        order.changeBilling(billing);
+        order.changeShipping(shipping);
+        order.addItem(product, new Quantity(1));
+        order.changePaymentMethod(PaymentMethod.GATEWAY_BALANCE);
+
+        assertWith(order,
+            o -> assertThat(o.items()).isNotEmpty(),
+            o -> assertThat(o.billing()).isNotNull(),
+            o -> assertThat(o.shipping()).isNotNull(),
+            o -> assertThat(o.paymentMethod()).isNotNull()
+        );
+    }
+
+    @Test
+    public void givenPlacedOrder_whenTryAddItems_shouldNotAllow() {
+
+        Order order = OrderTestDataBuilder.anOrder().status(OrderStatus.PLACED).build();
+
+        ThrowableAssert.ThrowingCallable addItemTask = () -> order
+            .addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(1));
+
+        assertThatExceptionOfType(OrderCannotBeEditedException.class)
+            .isThrownBy(addItemTask);
+    }
+
+    @Test
+    public void givenDraftOrder_whenChangeToPlacedAndAddItems_shouldNotAllow() {
+
+        Order order = OrderTestDataBuilder.anOrder().build();
+        order.place();
+
+        ThrowableAssert.ThrowingCallable addItemTask = () -> order
+            .addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(1));
+
+        assertThatExceptionOfType(OrderCannotBeEditedException.class)
             .isThrownBy(addItemTask);
     }
 }

@@ -1,9 +1,6 @@
 package br.com.mardoniorodrigues.ordering.domain.entity;
 
-import br.com.mardoniorodrigues.ordering.domain.exception.OrderCannotBePlacedException;
-import br.com.mardoniorodrigues.ordering.domain.exception.OrderDoesNotContainOrderItemException;
-import br.com.mardoniorodrigues.ordering.domain.exception.OrderInvalidShippingDeliveryDateException;
-import br.com.mardoniorodrigues.ordering.domain.exception.OrderStatusCannotBeChangedException;
+import br.com.mardoniorodrigues.ordering.domain.exception.*;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.*;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.CustomerId;
 import br.com.mardoniorodrigues.ordering.domain.valueObject.id.OrderId;
@@ -79,6 +76,7 @@ public class Order {
     }
 
     public void addItem(Product product, Quantity quantity) {
+        verifyIfChangeable();
         Objects.requireNonNull(product);
         Objects.requireNonNull(quantity);
 
@@ -114,16 +112,19 @@ public class Order {
     }
 
     public void changePaymentMethod(PaymentMethod paymentMethod) {
+        verifyIfChangeable();
         Objects.requireNonNull(paymentMethod);
         this.setPaymentMethod(paymentMethod);
     }
 
     public void changeBilling(Billing billing) {
+        verifyIfChangeable();
         Objects.requireNonNull(billing);
         this.setBilling(billing);
     }
 
     public void changeShipping(Shipping newShipping) {
+        verifyIfChangeable();
         Objects.requireNonNull(newShipping);
 
         if (newShipping.expectedDate().isBefore(LocalDate.now())) {
@@ -134,6 +135,7 @@ public class Order {
     }
 
     public void changeItemQuantity(OrderItemId orderItemId, Quantity quantity) {
+        verifyIfChangeable();
         Objects.requireNonNull(orderItemId);
         Objects.requireNonNull(quantity);
 
@@ -253,6 +255,12 @@ public class Order {
                 .filter(i -> i.id().equals(orderItemId))
                 .findFirst()
                 .orElseThrow(() -> new OrderDoesNotContainOrderItemException(this.id(), orderItemId));
+    }
+
+    private void verifyIfChangeable() {
+        if (!isDraft()) {
+            throw new OrderCannotBeEditedException(this.id(), this.status());
+        }
     }
 
     public Set<OrderItem> items() {
