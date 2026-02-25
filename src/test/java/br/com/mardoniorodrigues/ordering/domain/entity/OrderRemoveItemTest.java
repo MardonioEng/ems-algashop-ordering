@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertWith;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class OrderRemoveItemTest {
+class OrderRemoveItemTest {
 
     @Test
     void givenDraftOrder_whenRemoveItem_shouldRecalculate() {
