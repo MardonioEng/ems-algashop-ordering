@@ -76,9 +76,9 @@ public class Order {
     }
 
     public void addItem(Product product, Quantity quantity) {
-        verifyIfChangeable();
         Objects.requireNonNull(product);
         Objects.requireNonNull(quantity);
+        verifyIfChangeable();
 
         product.checkOutOfStock();
 
@@ -93,6 +93,17 @@ public class Order {
         }
 
         this.items.add(orderItem);
+
+        this.recalculateTotals();
+    }
+
+    public void removeItem(OrderItemId orderItemId) {
+        Objects.requireNonNull(orderItemId);
+        verifyIfChangeable();
+
+        OrderItem orderItem = this.findOrderItem(orderItemId);
+
+        this.items.remove(orderItem);
 
         this.recalculateTotals();
     }
@@ -112,20 +123,22 @@ public class Order {
     }
 
     public void changePaymentMethod(PaymentMethod paymentMethod) {
-        verifyIfChangeable();
         Objects.requireNonNull(paymentMethod);
+        verifyIfChangeable();
+
         this.setPaymentMethod(paymentMethod);
     }
 
     public void changeBilling(Billing billing) {
-        verifyIfChangeable();
         Objects.requireNonNull(billing);
+        verifyIfChangeable();
+
         this.setBilling(billing);
     }
 
     public void changeShipping(Shipping newShipping) {
-        verifyIfChangeable();
         Objects.requireNonNull(newShipping);
+        verifyIfChangeable();
 
         if (newShipping.expectedDate().isBefore(LocalDate.now())) {
             throw new OrderInvalidShippingDeliveryDateException(this.id());
@@ -135,9 +148,9 @@ public class Order {
     }
 
     public void changeItemQuantity(OrderItemId orderItemId, Quantity quantity) {
-        verifyIfChangeable();
         Objects.requireNonNull(orderItemId);
         Objects.requireNonNull(quantity);
+        verifyIfChangeable();
 
         OrderItem orderItem = this.findOrderItem(orderItemId);
         orderItem.changeQuantity(quantity);
@@ -252,9 +265,9 @@ public class Order {
         Objects.requireNonNull(orderItemId);
 
         return this.items.stream()
-                .filter(i -> i.id().equals(orderItemId))
-                .findFirst()
-                .orElseThrow(() -> new OrderDoesNotContainOrderItemException(this.id(), orderItemId));
+            .filter(i -> i.id().equals(orderItemId))
+            .findFirst()
+            .orElseThrow(() -> new OrderDoesNotContainOrderItemException(this.id(), orderItemId));
     }
 
     private void verifyIfChangeable() {
