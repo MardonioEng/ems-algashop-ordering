@@ -28,7 +28,7 @@ class OrderRemoveItemTest {
         OrderItem orderItem1 = order.items().iterator().next();
 
         order.addItem(
-            ProductTestDataBuilder.aProductAltRamMemery().build(),
+            ProductTestDataBuilder.aProductAltRamMemory().build(),
             new Quantity(3)
         );
 

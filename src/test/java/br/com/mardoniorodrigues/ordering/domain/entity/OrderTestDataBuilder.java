@@ -31,7 +31,7 @@ public class OrderTestDataBuilder {
         if (withItems) {
             order.addItem(ProductTestDataBuilder.aProduct().build(), new Quantity(2));
 
-            order.addItem(ProductTestDataBuilder.aProductAltRamMemery().build(), new Quantity(1));
+            order.addItem(ProductTestDataBuilder.aProductAltRamMemory().build(), new Quantity(1));
         }
 
         switch (this.status) {

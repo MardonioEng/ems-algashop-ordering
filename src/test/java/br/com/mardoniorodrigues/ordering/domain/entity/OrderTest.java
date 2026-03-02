@@ -91,7 +91,7 @@ class OrderTest {
         );
 
         order.addItem(
-            ProductTestDataBuilder.aProductAltRamMemery().build(),
+            ProductTestDataBuilder.aProductAltRamMemory().build(),
             new Quantity(1)
         );
 
