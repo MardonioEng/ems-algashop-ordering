@@ -1,0 +1,33 @@
+package br.com.mardoniorodrigues.ordering.domain.model.valueObject;
+
+import br.com.mardoniorodrigues.ordering.domain.model.exception.ProductOutOfStockException;
+import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.ProductId;
+import lombok.Builder;
+
+import java.util.Objects;
+
+@Builder
+public record Product(
+    ProductId id,
+    ProductName name,
+    Money price,
+    Boolean inStock
+) {
+
+    public Product {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(price);
+        Objects.requireNonNull(inStock);
+    }
+
+    public void checkOutOfStock() {
+        if (isOutOfStock()) {
+            throw new ProductOutOfStockException(this.id());
+        }
+    }
+
+    private boolean isOutOfStock() {
+        return !inStock();
+    }
+}
