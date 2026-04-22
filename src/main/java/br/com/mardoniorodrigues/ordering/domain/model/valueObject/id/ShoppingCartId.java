@@ -1,4 +1,4 @@
-package br.com.mardoniorodrigues.ordering.domain.model.entity;
+package br.com.mardoniorodrigues.ordering.domain.model.valueObject.id;
 
 import br.com.mardoniorodrigues.ordering.domain.model.utility.IdGenerator;
 

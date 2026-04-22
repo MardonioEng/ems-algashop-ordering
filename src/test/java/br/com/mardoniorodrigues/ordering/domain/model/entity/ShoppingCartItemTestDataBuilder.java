@@ -4,6 +4,7 @@ import br.com.mardoniorodrigues.ordering.domain.model.valueObject.Money;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.ProductName;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.Quantity;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.ProductId;
+import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.ShoppingCartId;
 
 public class ShoppingCartItemTestDataBuilder {
 

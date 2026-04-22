@@ -5,6 +5,7 @@ import br.com.mardoniorodrigues.ordering.domain.model.valueObject.Product;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.ProductName;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.Quantity;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.ProductId;
+import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.ShoppingCartId;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.ShoppingCartItemId;
 import org.junit.jupiter.api.Test;
 

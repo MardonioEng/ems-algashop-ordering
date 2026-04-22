@@ -7,6 +7,7 @@ import br.com.mardoniorodrigues.ordering.domain.model.valueObject.Product;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.Quantity;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.CustomerId;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.ProductId;
+import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.ShoppingCartId;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.ShoppingCartItemId;
 import lombok.Builder;
 
@@ -14,7 +15,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-public class ShoppingCart {
+public class ShoppingCart implements AggregateRoot<ShoppingCartId> {
 
     private ShoppingCartId id;
     private CustomerId customerId;

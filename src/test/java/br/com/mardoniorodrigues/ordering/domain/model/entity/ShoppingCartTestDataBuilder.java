@@ -2,6 +2,7 @@ package br.com.mardoniorodrigues.ordering.domain.model.entity;
 
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.Quantity;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.CustomerId;
+import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.ShoppingCartId;
 
 public class ShoppingCartTestDataBuilder {
 
