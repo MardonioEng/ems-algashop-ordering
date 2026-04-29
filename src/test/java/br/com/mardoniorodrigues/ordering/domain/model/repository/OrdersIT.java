@@ -4,6 +4,7 @@ import br.com.mardoniorodrigues.ordering.domain.model.entity.Order;
 import br.com.mardoniorodrigues.ordering.domain.model.entity.OrderTestDataBuilder;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.OrderId;
 import br.com.mardoniorodrigues.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
+import br.com.mardoniorodrigues.ordering.infrastructure.persistence.disassembler.OrderPersistenceEntityDisassembler;
 import br.com.mardoniorodrigues.ordering.infrastructure.persistence.provider.OrdersPersistenceProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,11 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import({OrdersPersistenceProvider.class, OrderPersistenceEntityAssembler.class})
+@Import({
+    OrdersPersistenceProvider.class,
+    OrderPersistenceEntityAssembler.class,
+    OrderPersistenceEntityDisassembler.class
+})
 class OrdersIT {
 
     private Orders orders;
