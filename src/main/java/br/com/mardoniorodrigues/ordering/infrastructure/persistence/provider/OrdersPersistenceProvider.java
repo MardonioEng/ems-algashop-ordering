@@ -3,6 +3,7 @@ package br.com.mardoniorodrigues.ordering.infrastructure.persistence.provider;
 import br.com.mardoniorodrigues.ordering.domain.model.entity.Order;
 import br.com.mardoniorodrigues.ordering.domain.model.repository.Orders;
 import br.com.mardoniorodrigues.ordering.domain.model.valueObject.id.OrderId;
+import br.com.mardoniorodrigues.ordering.infrastructure.persistence.assembler.OrderPersistenceEntityAssembler;
 import br.com.mardoniorodrigues.ordering.infrastructure.persistence.entity.OrderPersistenceEntity;
 import br.com.mardoniorodrigues.ordering.infrastructure.persistence.repository.OrderPersistenceEntityRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class OrdersPersistenceProvider implements Orders {
 
     private final OrderPersistenceEntityRepository persistenceRepository;
+    private final OrderPersistenceEntityAssembler assembler;
 
     @Override
     public Optional<Order> ofId(OrderId orderId) {
@@ -29,10 +31,7 @@ public class OrdersPersistenceProvider implements Orders {
     @Override
     public void add(Order aggretateRoot) {
 
-        OrderPersistenceEntity persistenceEntity = OrderPersistenceEntity.builder()
-            .id(aggretateRoot.id().value().toLong())
-            .customerId(aggretateRoot.customerId().value())
-            .build();
+        OrderPersistenceEntity persistenceEntity = assembler.fromDomain(aggretateRoot);
 
         persistenceRepository.saveAndFlush(persistenceEntity);
     }
